@@ -43,6 +43,7 @@ struct sockaddr_sco {
 #define SCO_OPTIONS	0x01
 struct sco_options {
 	__u16 mtu;
+	__u8 codec;
 };
 
 #define SCO_CONNINFO	0x02
@@ -73,6 +74,7 @@ struct sco_conn {
 struct sco_pinfo {
 	struct bt_sock	bt;
 	__u32		flags;
+	__u8		codec;
 	struct sco_conn	*conn;
 };
 
