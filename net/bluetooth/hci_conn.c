@@ -179,12 +179,21 @@ void hci_setup_sync(struct hci_conn *conn, __u16 handle)
 	cp.tx_bandwidth   = __constant_cpu_to_le32(0x00001f40);
 	cp.rx_bandwidth   = __constant_cpu_to_le32(0x00001f40);
 
-	if (test_and_clear_bit(HCI_CONN_SCO_TRANSPARENT, &conn->flags)) {
+	if (conn->attempt == 1 &&
+	    test_bit(HCI_CONN_SCO_TRANSPARENT, &conn->flags)) {
 		cp.pkt_type       = __constant_cpu_to_le16(EDR_ESCO_MASK &
 							   ~ESCO_2EV3);
 		cp.max_latency    = __constant_cpu_to_le16(0x000d);
 		cp.voice_setting  = __constant_cpu_to_le16(0x0003);
 		cp.retrans_effort = 0x02;
+	} else if (conn->attempt == 2 &&
+		   test_bit(HCI_CONN_SCO_TRANSPARENT, &conn->flags)) {
+		cp.pkt_type       = __constant_cpu_to_le16(EDR_ESCO_MASK |
+							   ESCO_EV3);
+		cp.max_latency    = __constant_cpu_to_le16(0x0007);
+		cp.voice_setting  = __constant_cpu_to_le16(0x0003);
+		cp.retrans_effort = 0x02;
+		clear_bit(HCI_CONN_SCO_TRANSPARENT, &conn->flags);
 	} else {
 		cp.pkt_type       = cpu_to_le16(conn->pkt_type);
 		cp.max_latency    = __constant_cpu_to_le16(0xffff);
