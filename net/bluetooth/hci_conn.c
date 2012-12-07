@@ -182,8 +182,15 @@ void hci_setup_sync(struct hci_conn *conn, __u16 handle)
 	cp.voice_setting  = cpu_to_le16(hdev->voice_setting);
 
 	if (test_and_clear_bit(HCI_CONN_SCO_T2_SETTINGS, &conn->flags)) {
+		cp.pkt_type       = cpu_to_le16(EDR_ESCO_MASK & ~ESCO_2EV3);
 		cp.voice_setting |= 3;
 		cp.max_latency    = __constant_cpu_to_le16(0x000d);
+		cp.retrans_effort = 0x02;
+		set_bit(HCI_CONN_SCO_T1_SETTINGS, &conn->flags);
+	} else if (test_and_clear_bit(HCI_CONN_SCO_T1_SETTINGS, &conn->flags)) {
+		cp.pkt_type       = cpu_to_le16(ESCO_EV3 | EDR_ESCO_MASK);
+		cp.voice_setting |= 3;
+		cp.max_latency    = __constant_cpu_to_le16(0x0007);
 		cp.retrans_effort = 0x02;
 	} else {
 		cp.max_latency    = __constant_cpu_to_le16(0xffff);

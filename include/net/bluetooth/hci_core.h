@@ -439,6 +439,7 @@ enum {
 	HCI_CONN_POWER_SAVE,
 	HCI_CONN_REMOTE_OOB,
 	HCI_CONN_SCO_T2_SETTINGS,
+	HCI_CONN_SCO_T1_SETTINGS,
 };
 
 static inline bool hci_conn_ssp_enabled(struct hci_conn *conn)
